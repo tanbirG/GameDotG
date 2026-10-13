@@ -1,4 +1,4 @@
-```javascript
+javascript
 const games=[
 ["Click Rush","Arcade","🎯","Hit the target in 20 seconds.","games/click-rush.html","assets/thumbs/click-rush.svg","4.8"],
 ["Guess Number","Puzzle","🔢","Guess the secret number from 1 to 100.","games/guess-number.html","assets/thumbs/guess-number.svg","4.7"],
