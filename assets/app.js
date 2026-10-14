@@ -5,7 +5,7 @@ const games=[
 ["Memory Match","Puzzle","🧠","Match all pairs as fast as you can.","games/memory-match.html","assets/thumbs/memory-match.svg","4.8"],
 ["Snake Classic","Arcade","🐍","Eat food, grow longer and beat your best score.","games/snake.html","assets/thumbs/snake.svg","4.9"],
 ["Number Click","Action","🔢","Click every number in the correct order.","games/number-click.html","assets/thumbs/number-click.svg","4.6"],
-["Color Sort Puzzle","Puzzle","🎨","Sort the colored balls into matching tubes.","color-sort-puzzle/index.html","assets/thumbs/color-sort-puzzle.svg","4.8"]
+["Color Sort Puzzle","Puzzle","🎨","Sort the colored balls into matching tubes.","color-sort-puzzle/index.html","assets/thumbs/color-sort-puzzle.svg","4.8"],
 ["Neon Rush", "Arcade", "🌌", "Dash through the neon grid, dodge barriers and collect energy.", "neon-rush/index.html", "assets/thumbs/neon-rush.svg", "4.8"],
 ];
 let cat="All";
