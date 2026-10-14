@@ -8,7 +8,6 @@ const games=[
 ["Snake Classic","Arcade","🐍","Eat food, grow longer and beat your best score.","games/snake.html","assets/thumbs/snake.svg","4.9"],
 ["Number Click","Action","🔢","Click every number in the correct order.","games/number-click.html","assets/thumbs/number-click.svg","4.6"]
 ];
-
 let cat="All";
 
 function render(){
