@@ -1,0 +1,33 @@
+(()=>{'use strict';
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),overlay=document.getElementById('overlay');
+const scoreEl=document.getElementById('score'),bestEl=document.getElementById('best'),coinsEl=document.getElementById('coins');
+let running=false,paused=false,score=0,coins=0,best=Number(localStorage.getItem('gamedotg_neon_best')||0),speed=4.2,spawn=0,frame=0,player={lane:1,jump:0,jumpV:0},obstacles=[],orbs=[],sound=true,audio=null,last=0;
+bestEl.textContent=best;document.getElementById('year').textContent=new Date().getFullYear();
+function beep(freq=440,dur=.07,type='sine'){if(!sound)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();let o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(.06,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+dur);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+dur)}catch(e){}}
+function reset(){score=0;coins=0;speed=4.2;spawn=0;frame=0;obstacles=[];orbs=[];player={lane:1,jump:0,jumpV:0};scoreEl.textContent='0';coinsEl.textContent='0'}
+function start(){reset();running=true;paused=false;overlay.classList.add('hidden');last=performance.now();requestAnimationFrame(loop);beep(620,.12)}
+function end(){running=false;let s=Math.floor(score);if(s>best){best=s;localStorage.setItem('gamedotg_neon_best',best);bestEl.textContent=best}document.getElementById('overlayTitle').textContent='RUN COMPLETE';document.getElementById('overlayText').textContent=`Score: ${s} · Energy collected: ${coins}. Try again to beat your best score!`;document.getElementById('startBtn').textContent='RUN AGAIN →';overlay.classList.remove('hidden');beep(130,.3,'sawtooth')}
+function move(d){if(!running||paused)return;player.lane=Math.max(0,Math.min(2,player.lane+d));beep(300+player.lane*100,.04)}
+function jump(){if(running&&!paused&&player.jump===0){player.jumpV=12;beep(520,.06)}}
+function laneX(l){return 450+(l-1)*155}
+function draw(){let w=900,h=520;ctx.clearRect(0,0,w,h);let g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#080c20');g.addColorStop(1,'#101b38');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+ctx.strokeStyle='#25365f';ctx.lineWidth=1;for(let i=0;i<15;i++){let y=(i*50+(frame*speed*2)%50);ctx.globalAlpha=.25+(y/h)*.4;ctx.beginPath();ctx.moveTo(120,y);ctx.lineTo(780,y);ctx.stroke()}ctx.globalAlpha=1;
+for(let l=0;l<3;l++){let x=laneX(l);ctx.strokeStyle=l===player.lane?'#55f6ff65':'#5c6a9b55';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x-70,0);ctx.lineTo(x-100,h);ctx.moveTo(x+70,0);ctx.lineTo(x+100,h);ctx.stroke()}
+for(let o of obstacles){let x=laneX(o.lane),y=o.y;ctx.save();ctx.shadowBlur=18;ctx.shadowColor=o.type==='low'?'#ff4fe1':'#ff9d50';ctx.fillStyle=o.type==='low'?'#ff4fe1':'#ff9d50';if(o.type==='low'){ctx.fillRect(x-35,y,70,22)}else{ctx.beginPath();ctx.moveTo(x,y-28);ctx.lineTo(x+33,y+26);ctx.lineTo(x-33,y+26);ctx.closePath();ctx.fill()}ctx.restore()}
+for(let c of orbs){ctx.save();ctx.translate(laneX(c.lane),c.y);ctx.rotate(frame*.04);ctx.shadowBlur=20;ctx.shadowColor='#55f6ff';ctx.fillStyle='#55f6ff';ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(10,0);ctx.lineTo(0,13);ctx.lineTo(-10,0);ctx.closePath();ctx.fill();ctx.restore()}
+let px=laneX(player.lane),py=420-player.jump;ctx.save();ctx.shadowBlur=25;ctx.shadowColor='#55f6ff';ctx.fillStyle='#55f6ff';ctx.beginPath();ctx.roundRect(px-22,py-30,44,50,10);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#0a1730';ctx.fillRect(px-12,py-18,7,5);ctx.fillRect(px+5,py-18,7,5);ctx.fillStyle='#ff4fe1';ctx.fillRect(px-13,py+8,26,5);ctx.restore();
+ctx.fillStyle='#c6d7ff';ctx.font='14px Inter,Arial';ctx.fillText('SPEED '+(speed/4.2).toFixed(1)+'x',20,28)}
+function loop(now){if(!running||paused)return;let dt=Math.min(2,(now-last)/16.67||1);last=now;frame+=dt;score+=dt*speed*.12;speed=Math.min(10,4.2+score/220);spawn-=dt;if(spawn<=0){let lane=Math.floor(Math.random()*3);obstacles.push({lane,y:-30,type:Math.random()<.48?'low':'block'});if(Math.random()<.7)orbs.push({lane:Math.floor(Math.random()*3),y:-80});spawn=Math.max(23,60-speed*3)+Math.random()*22}
+for(let o of obstacles)o.y+=speed*dt;for(let c of orbs)c.y+=speed*dt;obstacles=obstacles.filter(o=>o.y<560);orbs=orbs.filter(c=>c.y<560);
+if(player.jump>0){player.jump+=player.jumpV*dt;player.jumpV-=.7*dt;if(player.jump<0){player.jump=0;player.jumpV=0}}
+let px=laneX(player.lane),py=420-player.jump;for(let i=obstacles.length-1;i>=0;i--){let o=obstacles[i];if(Math.abs(o.y-420)<26&&o.lane===player.lane){if(o.type==='block'||player.jump<23){end();return}else{obstacles.splice(i,1)}}}
+for(let i=orbs.length-1;i>=0;i--){let c=orbs[i];if(c.lane===player.lane&&Math.abs(c.y-py)<36){orbs.splice(i,1);coins++;score+=20;coinsEl.textContent=coins;beep(780,.08,'triangle')}}
+scoreEl.textContent=Math.floor(score);draw();requestAnimationFrame(loop)}
+document.getElementById('startBtn').addEventListener('click',()=>{if(paused){paused=false;overlay.classList.add('hidden');document.getElementById('pauseBtn').textContent='Ⅱ PAUSE';last=performance.now();requestAnimationFrame(loop)}else start()});
+document.getElementById('leftBtn').addEventListener('click',()=>move(-1));document.getElementById('rightBtn').addEventListener('click',()=>move(1));document.getElementById('jumpBtn').addEventListener('click',jump);
+document.getElementById('pauseBtn').addEventListener('click',()=>{if(!running)return;paused=!paused;document.getElementById('pauseBtn').textContent=paused?'▶ RESUME':'Ⅱ PAUSE';if(paused){document.getElementById('overlayTitle').textContent='PAUSED';document.getElementById('overlayText').textContent='Take a breather, then resume your run.';document.getElementById('startBtn').textContent='RESUME →';overlay.classList.remove('hidden')}else{overlay.classList.add('hidden');last=performance.now();requestAnimationFrame(loop)}});
+document.getElementById('soundBtn').addEventListener('click',e=>{sound=!sound;e.currentTarget.textContent=sound?'🔊 Sound':'🔇 Muted';if(sound)beep(500)});
+window.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp',' ','a','A','d','D','w','W'].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')move(-1);if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')move(1);if(e.key==='ArrowUp'||e.key===' '||e.key.toLowerCase()==='w')jump();if(e.key.toLowerCase()==='p'&&running)document.getElementById('pauseBtn').click();if(e.key==='Enter'&&!running)start()});
+canvas.addEventListener('pointerdown',e=>{if(!running||paused)return;let r=canvas.getBoundingClientRect(),x=e.clientX-r.left;if(x<r.width*.38)move(-1);else if(x>r.width*.62)move(1);else jump()});
+draw();
+})();
