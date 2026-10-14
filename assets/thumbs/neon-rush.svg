@@ -1,0 +1,31 @@
+ <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#090b2b"/>
+      <stop offset="100%" stop-color="#1a0640"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#18204d"/>
+      <stop offset="100%" stop-color="#080b20"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="360" rx="18" fill="url(#bg)"/>
+  <g stroke="#20eaff" stroke-opacity=".35" stroke-width="1">
+    <path d="M0 80H600M0 130H600M0 180H600M0 230H600M0 280H600"/>
+    <path d="M60 0L200 360M160 0L250 360M440 0L350 360M540 0L400 360"/>
+  </g>
+  <path d="M170 360L250 85H350L430 360Z" fill="url(#road)" stroke="#20eaff" stroke-width="3"/>
+  <path d="M300 105V150M300 180V225M300 255V300M300 325V350" stroke="#ff3df2" stroke-width="5" stroke-linecap="round"/>
+  <g fill="#ffe66d" stroke="#ff9b36" stroke-width="2">
+    <path d="M235 190l10-15 10 15-10 15z"/>
+    <path d="M335 255l10-15 10 15-10 15z"/>
+  </g>
+  <g transform="translate(300 215)">
+    <path d="M0-48L27 20L0 10L-27 20Z" fill="#ff3df2" stroke="#fff" stroke-width="2"/>
+    <path d="M0-30L10 8L0 3L-10 8Z" fill="#20eaff"/>
+  </g>
+  <text x="300" y="48" text-anchor="middle" fill="#20eaff" font-family="Arial,sans-serif" font-size="35" font-weight="900" letter-spacing="4">NEON RUSH</text>
+  <text x="300" y="78" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="12" letter-spacing="5">DODGE • DASH • SURVIVE</text>
+  <rect x="215" y="310" width="170" height="32" rx="16" fill="#ff3df2"/>
+  <text x="300" y="331" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="15" font-weight="bold">▶ PLAY NOW</text>
+</svg>
